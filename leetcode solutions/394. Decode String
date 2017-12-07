@@ -1,0 +1,84 @@
+public class Solution {
+    public String decodeString(String s) {
+        // base/corner cases
+        if (s == null) {
+            return null;
+        }
+        if (s.length() == 0) {
+            return s;
+        }
+        
+        // main case
+        Queue<Character> myQueue = new LinkedList<Character>();
+        for (int i = 0; i < s.length(); i++) {
+            myQueue.add(new Character(s.charAt(i)));
+        }
+        StringBuilder decoded = decodeStringHelper(myQueue);
+        if (decoded == null) {
+            return null;
+        } else {
+            return decoded.toString();
+        }
+    }
+    
+    private StringBuilder decodeStringHelper(Queue<Character> q) {
+        // base/corner cases
+        if (q == null) {
+            return new StringBuilder();
+        }
+        
+        // main case
+        StringBuilder decoded = new StringBuilder();
+        StringBuilder kStr = new StringBuilder();
+        while(!q.isEmpty()) {
+            Character temp = q.remove();
+            char tempChar = temp.charValue();
+            if (Character.isDigit(tempChar)) {
+                kStr.append(tempChar);
+            }
+            else if (Character.isLetter(tempChar)) {
+                decoded.append(tempChar);
+            }
+            else if (tempChar == '[') {
+                Queue<Character> recrQ = new LinkedList<Character>();
+                int bracketCount = 1;
+                while (!q.isEmpty()) {
+                    Character temp2 = q.remove();
+                    char tempChar2 = temp2.charValue();
+                    if (tempChar2 == '[') {
+                        recrQ.add(temp2);
+                        bracketCount++;
+                    }
+                    else if (tempChar2 == ']') {
+                        bracketCount--;
+                        if (bracketCount > 0) {
+                            recrQ.add(temp2);
+                        } else {
+                            break;
+                        }
+                    }
+                    else {
+                        recrQ.add(temp2);
+                    }
+                }
+                StringBuilder recrDecoded = decodeStringHelper(recrQ);
+                decoded.append(repeat(recrDecoded, kStr));
+                kStr = new StringBuilder();
+            }
+
+        }
+        return decoded;
+    }
+    
+    private StringBuilder repeat(StringBuilder sb, StringBuilder intStr) {
+        StringBuilder repeated = new StringBuilder(sb);
+        try {
+            int k = Integer.parseInt(intStr.toString());
+            for (int i = 1; i < k; i++) {
+                repeated.append(sb);
+            }
+        } finally {
+            return repeated;
+        }
+    }
+}

@@ -1,0 +1,80 @@
+public class Solution {
+    public int numIslands(char[][] grid) {
+        // base/corner cases
+        if (grid == null) {
+            return 0;
+        }
+        if (grid.length == 0) {
+            return 0;
+        }
+        
+        // main case
+        int landCount = 0;
+        boolean[][] explored = new boolean[grid.length][grid[0].length];
+        initialize(explored);
+        for (int i = 0; i < grid.length; i++) {
+            for (int j = 0; j < grid[i].length; j++) {
+                if (!explored[i][j]) {
+                    boolean isLand = explore(grid, explored, i, j);
+                    if (isLand) {
+                        landCount++;
+                    }
+                }
+            }
+        }
+        return landCount;
+    }
+    
+    private boolean explore(char[][] grid, boolean[][] explored, int i, int j) {
+        // base/corner cases
+        if (i < 0 || i >= explored.length) {
+            return false;
+        }
+        if (j < 0 || j >= explored[i].length) {
+            return false;
+        }
+        
+        // main case
+        explored[i][j] = true;
+        
+        char c = grid[i][j];
+        boolean isLand = false;
+        if (c == '0') {
+            isLand = false;
+        } else { // c == '1'
+            isLand = true;
+            if (!hasBeenExplored(explored, i-1, j)) {
+                explore(grid, explored, i-1, j);    
+            }
+            if (!hasBeenExplored(explored, i+1, j)) {
+                explore(grid, explored, i+1, j);    
+            }
+            if (!hasBeenExplored(explored, i, j-1)) {
+                explore(grid, explored, i, j-1);    
+            }
+            if (!hasBeenExplored(explored, i, j+1)) {
+                explore(grid, explored, i, j+1);    
+            }
+        }
+        return isLand;
+    }
+    
+    private boolean hasBeenExplored(boolean[][] explored, int i, int j) {
+        if (i < 0 || i >= explored.length) {
+            return true;
+        }
+        else if (j < 0 || j >= explored[i].length) {
+            return true;
+        }
+        else {
+            return explored[i][j];
+        }
+    }
+    private void initialize(boolean[][] bools) {
+        for (int i = 0; i < bools.length; i++) {
+            for (int j = 0; j < bools[i].length; j++) {
+                bools[i][j] = false;
+            }
+        }
+    }
+}

@@ -1,0 +1,63 @@
+public class MinStack {
+
+    // to optimize futher, use ListNodes
+    private LinkedList<Integer> myStack;
+    private LinkedList<Integer> myMin;
+
+    /** initialize your data structure here. */
+    public MinStack() {
+        this.myStack = new LinkedList<Integer>();
+        this.myMin = new LinkedList<Integer>();
+    }
+    
+    public void push(int x) {
+        Integer boxed = new Integer(x);
+        this.myStack.add(0, boxed);
+        
+        if (this.myMin.size() > 0) {
+            Integer currMin = this.myMin.get(0);
+            if (Integer.compare(boxed, currMin) <= 0) {
+                this.myMin.add(0, boxed);
+            }
+        } else {
+            this.myMin.add(0, boxed);
+        }
+    }
+    
+    public void pop() throws Exception {
+        if (this.myStack.size() > 0) {
+            Integer elem = this.myStack.remove();
+            Integer min = this.getMin();
+            if (Integer.compare(elem, min) == 0) {
+                this.myMin.remove();
+            }
+        } else {
+            throw new Exception("no elements in stack!");
+        }
+    }
+    
+    public int top() throws Exception {
+        if (this.myStack.size() > 0) {
+            return this.myStack.get(0).intValue();
+        } else {
+            throw new Exception("no elements in stack!");
+        }
+    }
+    
+    public int getMin() throws Exception {
+        if (this.myMin.size() > 0) {
+            return this.myMin.get(0).intValue();
+        } else {
+            throw new Exception("no elements in stack!");
+        }
+    }
+}
+
+/**
+ * Your MinStack object will be instantiated and called as such:
+ * MinStack obj = new MinStack();
+ * obj.push(x);
+ * obj.pop();
+ * int param_3 = obj.top();
+ * int param_4 = obj.getMin();
+ */

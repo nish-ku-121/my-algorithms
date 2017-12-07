@@ -1,0 +1,28 @@
+public class Solution {
+    public boolean find132pattern(int[] nums) {
+        // base/corner cases
+        if (nums == null) {
+            return false;
+        }
+        if (nums.length < 3) {
+            return false;
+        }
+        
+        // main case
+        int minSoFar = nums[0];
+        for (int j = 1; j < nums.length; j++) {
+            int aj = nums[j];
+            if (aj <= minSoFar) {
+                minSoFar = aj;
+            } else { // aj > minSoFar = ai
+                for (int k = j+1; k < nums.length; k++) {
+                    int ak = nums[k];
+                    if (aj > ak && ak > minSoFar) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+}

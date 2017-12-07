@@ -1,0 +1,36 @@
+public class Solution {
+    public List<String> findRepeatedDnaSequences(String s) {
+        // base/corner cases
+        if (s == null) {
+            return null;
+        }
+        
+        // main case
+        int seqLength = 10;
+        Hashtable<String, Integer> counter = new Hashtable<String, Integer>();
+        List<String> result = new ArrayList<String>();
+        for (int i = 0; i < s.length() - seqLength + 1; i++) {
+            String seq = s.substring(i, i+seqLength);
+            increment(counter, seq);
+        }
+        
+        for (Map.Entry<String, Integer> entry : counter.entrySet()) {
+            String key = entry.getKey();
+            int value = entry.getValue().intValue();
+            if (value > 1) {
+                result.add(key);
+            }
+        }
+        
+        return result;
+    }
+    
+    private void increment(Hashtable<String, Integer> table, String s) {
+        Integer val = table.get(s);
+        if (val == null) {
+            table.put(s, new Integer(1));
+        } else {
+            table.put(s, new Integer(val.intValue() + 1));
+        }
+    }
+}

@@ -1,0 +1,94 @@
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) { val = x; }
+ * }
+ */
+public class Solution {
+    public ListNode reverseBetween(ListNode head, int m, int n) {
+        // base/corner cases
+        if (m == n || head == null) {
+            return head;
+        }
+        
+        // main case
+        int i = 0;
+        ListNode sentinel = new ListNode(0);
+        sentinel.next = head;
+        ListNode parent = sentinel;
+        ListNode mthNode = null;
+        
+        // preprocess
+        
+        // move initial pointers up to the (m-1)th element
+        while (i != m-1) {
+            parent = parent.next;
+            if (parent != null) {
+                i++;
+            } else {
+                return head;
+            }
+        }
+        
+        // do initial swap of next two elements and set mth node pointer
+        if (!swapNextTwo(parent)) {
+            return head;
+        } else {
+            mthNode = parent.next;
+            i++;
+        }
+        
+        // main processing, move nodes up
+        while (i+2 <= n) {
+            // both valid because i+2 <= n and n <= #elems in list
+            ListNode next = mthNode.next; 
+            ListNode nextNext = mthNode.next.next;
+            
+            next.next = nextNext.next;
+            nextNext.next = parent.next;
+            parent.next = nextNext;
+            i++;
+        }
+        
+        return sentinel.next;
+    }
+    
+    private boolean swapNextTwo(ListNode node) {
+        ListNode next = node.next;
+        if (next != null) {
+            ListNode nextNext = next.next;
+            if (nextNext != null) {
+                next.next = nextNext.next;
+                nextNext.next = next;
+                node.next = nextNext;
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+}
+
+|
+SNTL->1->2->3->4->5->NULL
+|
+   
+         |
+SNTL->1->3->2->4->5->NULL
+      |
+
+         |
+SNTL->1->3->2->4->5->NULL
+      |
+
+            |
+SNTL->1->4->3->2->5->NULL
+      |
+
+               |
+SNTL->1->5->4->3->2->NULL
+      |

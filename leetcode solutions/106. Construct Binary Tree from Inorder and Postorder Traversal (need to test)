@@ -1,0 +1,75 @@
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+public class Solution {
+    int i = 0;
+    int j = 0;
+    public TreeNode buildTree(int[] inorder, int[] postorder) {
+        i = 0;
+        j = 0;
+        return buildTreeHelper(inorder, postorder, 0, 0, null, null);
+    }
+    
+    private TreeNode buildTreeHelper(int[] inorder, int[] postorder, TreeNode left, int terminator) {
+        // base/corner cases
+        if (i >= inorder.length || j < postorder.length) {
+            return left;
+        }
+        
+        // main case
+        int inorderElem = inorder[i];
+        int postorderElem = postorder[j];
+        TreeNode subtree = null;
+        if (postorderElem == terminator) { // done processing a right subtree
+            return left;
+        }
+        else if (inorderElem == postOrderElem) { // looking at a leaf or parent node; there is not right node
+            subtree = new TreeNode(inorderElem);
+            linkChildren(subtree, left, null);
+            i++;
+            j++;
+        } 
+        else { // there is a right child/subtree
+            subtree = new TreeNode(inorderElem);
+            i++;
+            TreeNode right = buildTreeHelper(inorder, postorder, null, inorderElem);
+            linkChildren(subtree, left, right);
+            j++;
+        }
+        return buildTreeHelper(inorder, postorder, subtree, null);
+    }
+    
+    private void linkChildren(TreeNode parent, TreeNode left, TreeNode right) {
+        if (right != null) {
+            parent.right = right;
+        }
+        if (left != null) {
+            parent.left = left;
+        }
+    }
+}
+
+
+
+i                               |
+inorder:   l1   p1  r1  p2  r2
+
+j                               |
+postorder: l1   r1  p1  r2  p2
+
+recr: r2 left, null term.
+recr: null left, p2 term.
+        r2 subtree
+recr: p1 left, null terminator
+        p2 subtree
+        got: r2
+        p2 left = p1
+        p2 right = r2
+
+recr: p2 left, null term.

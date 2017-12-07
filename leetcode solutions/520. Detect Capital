@@ -1,0 +1,25 @@
+public class Solution {
+    public boolean detectCapitalUse(String word) {
+        // base/corner cases
+        if (word == null || word.length() < 2) {
+            return true;
+        }
+        
+        // main case
+        boolean isFirstCap = Character.isUpperCase(word.charAt(0));
+        boolean isSecondCap = Character.isUpperCase(word.charAt(1));
+        if (!isFirstCap && isSecondCap) {
+            return false;
+        }
+        
+        boolean runningCap = isSecondCap;
+        for (int i = 2; i < word.length(); i++) {
+            boolean isithCap = Character.isUpperCase(word.charAt(i));
+            runningCap = isithCap ^ runningCap;
+            if (runningCap) {
+                return false;
+            }
+        }
+        return true;
+    }
+}

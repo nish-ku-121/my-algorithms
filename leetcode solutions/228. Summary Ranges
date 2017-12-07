@@ -1,0 +1,39 @@
+public class Solution {
+    public List<String> summaryRanges(int[] nums) {
+        // base/corner cases
+        if (nums == null) {
+            return null;
+        }
+        
+        // main case
+        List<String> ranges = new ArrayList<String>();
+        int start = nums[0];
+        int end = nums[0];
+        int i = 1;
+        while (i < nums.length) {
+            int elem = nums[i];
+            if (elem == end+1) {
+                end = elem;
+                i++;
+            } else {
+                ranges.add(createRangeStr(start,end));
+                
+                start = elem;
+                end = elem;
+                i++;
+            }
+        }
+        ranges.add(createRangeStr(start,end));
+        return ranges;
+    }
+    
+    private static String createRangeStr(int start, int end) {
+        String rangeStr = null;
+        if (start == end) {
+            rangeStr = Integer.toString(start);
+        } else {
+            rangeStr = new String(start + "->" + end);
+        }
+        return rangeStr;
+    }
+}

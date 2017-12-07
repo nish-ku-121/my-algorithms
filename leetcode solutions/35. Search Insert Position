@@ -1,0 +1,38 @@
+public class Solution {
+    public int searchInsert(int[] nums, int target) {
+        return binarySearch(nums, target, 0, nums.length-1);
+    }
+    
+    private int binarySearch(int[] nums, int target, int i, int j) {
+        // base/corner case
+        if (i == j) {
+            int val = nums[i];
+            if (target == val) {
+                return i;
+            }
+            else if (target < val) {
+              // assuming the semantics of "...where it would be..." means 
+              // "where it would be if everything was shifted to the right".
+              // This implies that if target < val, then target would be in val's position
+              // and val would be shifted to the right
+                return i; 
+            } else {
+                return i+1; // effectively the same as Math.min(i+1, nums.length);
+            }
+        }
+        
+        // main case
+        int midIndex = (i+j)/2;
+        int mid = nums[midIndex];
+        if (target == mid) {
+            return midIndex;
+        }
+        else if (target < mid) {
+            return binarySearch(nums, target, i, Math.max(i, midIndex-1));
+        }
+        else {
+            return binarySearch(nums, target, midIndex+1, j);
+        }
+        
+    }
+}

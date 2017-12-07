@@ -1,0 +1,81 @@
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) { val = x; }
+ * }
+ */
+public class Solution {
+    public ListNode removeNthFromEnd(ListNode head, int n) {
+        // base/corner cases
+        if (head == null) {
+            return null;
+        }
+        
+        // main case
+        ListNode sentinel = new ListNode(0);
+        sentinel.next = head;
+        ListNode tail = sentinel;
+        ListNode nthParent = sentinel;
+        int distance = 0;
+        
+        // preprocess
+        while (distance != n) {
+            tail = tail.next;
+            distance++;
+        }
+        
+        // main processing
+        while (tail != null) {
+            if (tail.next == null) { // reached the tail node
+                removeNext(nthParent);
+                break;
+            } else {
+                tail = tail.next;
+                nthParent = nthParent.next;
+            }
+        }
+        
+        return sentinel.next;
+    }
+    
+    private void removeNext(ListNode node) {
+        if (node != null) {
+            ListNode next = node.next;
+            if (next != null) {
+                ListNode nextNext = next.next;
+                
+                // splice out next node
+                node.next = nextNext;
+                next.next = null;
+            }
+        }
+    }
+}
+
+1->2->3->4->5, and n = 2.
+|
+SNTL->1->2->3->4->5
+|
+      |
+SNTL->1->2->3->4->5
+|
+         |
+SNTL->1->2->3->4->5
+|
+            |
+SNTL->1->2->3->4->5
+      |
+               |
+SNTL->1->2->3->4->5
+         |
+                  |
+SNTL->1->2->3->4->5
+            |
+               |
+SNTL->1->2->3->5
+            |
+
+
+1->2->3->5

@@ -1,0 +1,33 @@
+public class Solution {
+    public int nthUglyNumber(int n) {
+        // base/corner cases
+        
+        // main case
+        boolean[] uglyNums = new boolean[1691];
+        initializeUglyNums(uglyNums);
+        uglyNums[1] = true;
+        uglyNums[2] = true;
+        uglyNums[3] = true;
+        uglyNums[5] = true;
+        int tempUgly = 1;
+        while(tempUgly < uglyNums.length) {
+            for (int i = 2; i < uglyNums.length; i++) {
+                int multiplier = uglyNums[i];
+                if (uglyNums[multiplier]) {
+                    int newUgly = tempUgly * multiplier;
+                    if (newUgly < uglyNums.length) {
+                        uglyNums[]
+                    }
+                }
+                
+            }
+            
+        }
+    }
+    
+    private void initializeUglyNums(boolean[] uglyNums) {
+        for (int i = 0; i < uglyNums.length; i++) {
+            uglyNums[i] = false;
+        }
+    }
+}

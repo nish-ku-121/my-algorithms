@@ -1,0 +1,61 @@
+public class Solution {
+    public boolean canJump(int[] nums) {
+        //return canJumpRecursive(nums, 0);
+        return canJumpDP(nums);
+    }
+    
+    // recursive solution
+    private boolean canJumpRecursive(int[] nums, int i) {
+        // base/corner cases
+        if (nums == null) {
+            return true;
+        }
+        if (nums.length == 0) {
+            return true;
+        }
+        if (i == nums.length-1) {
+            return true;
+        }
+        
+        // main case
+        int jumpVal = nums[i];
+        boolean jump = false;
+        for (int j = 1; (j <= jumpVal) && ((i+j) < nums.length); j++) {
+            jump = canJumpRecursive(nums, i+j);
+            if (jump) {
+                break;
+            }
+        }
+        return jump;
+    }
+    
+    // DP solution
+    private boolean canJumpDP(int[] nums) {
+        // base/corner cases
+        if (nums == null) {
+            return true;
+        }
+        if (nums.length == 0) {
+            return true;
+        }
+        
+        // main case
+        boolean[] A = new boolean[nums.length];
+        for (int i = 0; i < A.length; i++) {
+            A[i] = false;
+        }
+        A[nums.length-1] = true;
+        
+        for (int i = nums.length-2; i >= 0; i--) {
+            int jumpVal = nums[i];
+            for (int j = 1; (j <= jumpVal) && ((i+j) < nums.length); j++) {
+                boolean jump = A[i+j];
+                if (jump) {
+                    A[i] = jump;
+                    break;
+                }
+            }
+        }
+        return A[0];
+    }
+}
