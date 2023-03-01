@@ -1,0 +1,72 @@
+'''
+108. Convert Sorted Array to Binary Search Tree
+
+Given an integer array nums where the elements are sorted in ascending order, convert it to a 
+height-balanced
+ binary search tree.
+ 
+Input: nums = [-10,-3,0,5,9]
+Output: [0,-3,9,-10,null,5]
+Explanation: [0,-10,5,null,-3,null,9] is also accepted
+
+Input: nums = [1,3]
+Output: [3,1]
+Explanation: [1,null,3] and [3,1] are both height-balanced BSTs.
+'''
+
+from queue import Queue
+
+class TreeNode:
+    def __init__(self, value, left=None, right=None):
+        self.value = value
+        self.left = left
+        self.right = right
+    
+    def __str__(self):
+        return f"TreeNode {self.value}"
+        
+
+def sorted_array_to_bst(nums):
+    # base / corner cases
+    if nums is None:
+        return None
+    
+    # main case
+    return sorted_array_to_bst_helper(nums, 0, len(nums)-1)
+
+def sorted_array_to_bst_helper(nums, i, j):
+    # base / corner cases
+    if (i > j):
+        return None
+    if (i == j):
+        return TreeNode(nums[i])
+    
+    # main case
+    mid_index = (i+j) // 2
+    return TreeNode(nums[mid_index],
+                    sorted_array_to_bst_helper(nums, i, mid_index-1),
+                    sorted_array_to_bst_helper(nums, mid_index+1, j))
+
+def bfs(node):
+    def bfs_helper(queue, values):
+        if queue.empty():
+            return
+        item = queue.get()
+        if item is None:
+            values.append(None)
+        else:
+            values.append(item.value)
+            if (item.left is not None or item.right is not None):
+                queue.put(item.left)
+                queue.put(item.right)
+        bfs_helper(queue, values)
+        
+    fifo_queue = Queue()
+    fifo_queue.put(node)
+    values_in_bfs_order = []
+    bfs_helper(fifo_queue, values_in_bfs_order)
+    return values_in_bfs_order
+    
+                
+nums = [-10,-3,0,5,9] # res = [0,-10,5,null,-3,null,9]
+print(bfs(sorted_array_to_bst(nums)))

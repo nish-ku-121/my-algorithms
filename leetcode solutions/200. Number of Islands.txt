@@ -1,0 +1,84 @@
+'''
+200. Number of Islands
+
+https://leetcode.com/problems/number-of-islands/
+
+Given an m x n 2D binary grid grid which represents a map of '1's (land) and '0's (water), return the number of islands.
+
+An island is surrounded by water and is formed by connecting adjacent lands horizontally or vertically. You may assume all four edges of the grid are all surrounded by water.
+
+Example 1:
+Input: grid = [
+  ["1","1","1","1","0"],
+  ["1","1","0","1","0"],
+  ["1","1","0","0","0"],
+  ["0","0","0","0","0"]
+]
+Output: 1
+
+Example 2:
+Input: grid = [
+  ["1","1","0","0","0"],
+  ["1","1","0","0","0"],
+  ["0","0","1","0","0"],
+  ["0","0","0","1","1"]
+]
+Output: 3
+
+Constraints:
+- m == grid.length
+- n == grid[i].length
+- 1 <= m, n <= 300
+- grid[i][j] is '0' or '1'.
+'''
+
+def num_islands(grid):
+    # base/corner cases
+    if grid is None:
+        return None
+    
+    # main case
+    island_count = 0
+    explored = [[False] * len(row) for row in grid]
+    for i in range(len(grid)):
+        for j in range(len(grid[i])):
+            if not explored[i][j]:
+                if explore(grid, i, j, explored) > 0:
+                    island_count += 1
+    return island_count
+
+def explore(grid, i, j, explored):
+    land_count = 0
+    if is_valid(grid, i, j) and not explored[i][j]:
+        explored[i][j] = True
+        if is_land(grid, i, j):
+            land_count += (1 
+                           + explore(grid, i+1, j, explored)
+                           + explore(grid, i-1, j, explored)
+                           + explore(grid, i, j+1, explored)
+                           + explore(grid, i, j-1, explored))
+    return land_count
+
+def is_valid(grid, i, j):
+    if i < len(grid) and j < len(grid[i]):
+        return True
+    else:
+        return False
+
+def is_land(grid, i, j):
+    if not is_valid(grid, i, j):
+        return False
+    else:
+        if grid[i][j] == '0':
+            return False
+        else: # grid[i][j] == 1 (or other non-zero number)
+            return True
+
+
+grid = [
+  ["1","1","0","0","0"],
+  ["1","1","0","0","0"],
+  ["0","0","1","0","0"],
+  ["0","0","0","1","1"]
+]
+print(num_islands(grid))

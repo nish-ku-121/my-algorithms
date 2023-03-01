@@ -1,0 +1,59 @@
+'''
+236. Lowest Common Ancestor of a Binary Tree
+
+https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-tree/
+
+Given a binary tree, find the lowest common ancestor (LCA) of two given nodes in the tree.
+
+According to the definition of LCA on Wikipedia: “The lowest common ancestor is defined between two nodes p and q as the lowest node in T that has both p and q as descendants (where we allow a node to be a descendant of itself).”
+
+Constraints:
+- The number of nodes in the tree is in the range [2, 10^5].
+- (-10)^9 <= Node.val <= 10^9
+- All Node.val are unique.
+- p != q
+- p and q will exist in the tree.
+'''
+
+# Definition for a binary tree node.
+class TreeNode:
+    def __init__(self, x, left=None, right=None):
+        self.val = x
+        self.left = left
+        self.right = right
+
+def lowest_common_ancestor(root, p, q):
+    def lca_helper(node, p, q, ancs_so_far):
+        if node is None:
+            return False, False
+            
+        ancs_of_p, ancs_of_q = False, False
+        if node.val == p:
+            ancs_of_p, ancs_of_q = True, False
+        if node.val == q:
+            ancs_of_p, ancs_of_q = False, True
+        
+        left_ancs_of_p, left_ancs_of_q = lca_helper(node.left, p, q, ancs_so_far)
+        ancs_of_p = ancs_of_p or left_ancs_of_p
+        ancs_of_q = ancs_of_q or left_ancs_of_q
+        
+        right_ancs_of_p, right_ancs_of_q = lca_helper(node.right, p, q, ancs_so_far)
+        ancs_of_p = ancs_of_p or right_ancs_of_p
+        ancs_of_q = ancs_of_q or right_ancs_of_q
+        
+        if ancs_of_p and ancs_of_q:
+            ancs_so_far.append(node)
+            
+        return ancs_of_p, ancs_of_q
+        
+    ancestors = []
+    lca_helper(root, p, q, ancestors)
+    return ancestors[0]
+
+n1 = TreeNode(2, TreeNode(7), TreeNode(4))
+n2 = TreeNode(1, TreeNode(0), TreeNode(8))
+n3 = TreeNode(5, TreeNode(6), n1)
+root = TreeNode(3, n3, n2)
+# root = TreeNode(1, None, TreeNode(2))
+p, q = 5, 1
+print(lowest_common_ancestor(root, p, q).val)

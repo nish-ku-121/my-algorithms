@@ -1,0 +1,60 @@
+Given a binary tree, check whether it is a mirror of itself (ie, symmetric around its center).
+
+For example, this binary tree [1,2,2,3,4,4,3] is symmetric:
+
+    1
+   / \
+  2   2
+ / \ / \
+3  4 4  3
+ 
+
+But the following [1,2,2,null,3,null,3] is not:
+
+    1
+   / \
+  2   2
+   \   \
+   3    3
+
+
+
+
+public class TreeNode {
+    int val;
+    TreeNode left;
+    TreeNode right;
+    TreeNode(int x) { val = x; }
+ }
+
+class Solution {
+    public boolean isSymmetric(TreeNode root) {
+        // base/corner cases
+        if (root == null) {
+            return true;
+        }
+        
+        // main case
+        return isMirrorEqual(root.left, root.right);
+    }
+    
+    private static boolean isMirrorEqual(TreeNode left, TreeNode right) {
+        // base/corner cases
+        if (left == null && right == null) {
+            return true;
+        }
+        if (left == null) {
+            return false;
+        }
+        if (right == null) {
+            return false;
+        }
+        
+        // main case
+        if (left.val != right.val) {
+            return false;
+        } else {
+            return isMirrorEqual(left.right, right.left) && isMirrorEqual(left.left, right.right);
+        }
+    }
+}

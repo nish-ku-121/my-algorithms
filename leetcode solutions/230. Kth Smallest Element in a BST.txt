@@ -1,0 +1,60 @@
+'''
+230. Kth Smallest Element in a BST
+
+https://leetcode.com/problems/kth-smallest-element-in-a-bst/
+
+Given the root of a binary search tree, and an integer k, return the kth smallest value (1-indexed) of all the values of the nodes in the tree.
+
+Constraints:
+- The number of nodes in the tree is n.
+- 1 <= k <= n <= 10^4
+- 0 <= Node.val <= 10^4
+ 
+
+Follow up: If the BST is modified often (i.e., we can do insert and delete operations) and you need to find the kth smallest frequently, how would you optimize?
+'''
+
+# Definition for a binary tree node.
+class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+        
+def kthSmallest(root, k: int) -> int:
+    def kth_smallest_helper(node, k, curr_idx):
+        rtn_node = None
+        
+        # search left subtree
+        if node.left is not None:
+            curr_idx, rtn_node = kth_smallest_helper(node.left, k, curr_idx)
+        if rtn_node is not None:
+            return curr_idx, rtn_node
+            
+        # check current node
+        if k == curr_idx:
+            return curr_idx, node
+        else:
+            curr_idx += 1
+        
+        # search right subtree
+        if node.right is not None:
+            curr_idx, rtn_node = kth_smallest_helper(node.right, k, curr_idx)
+        if rtn_node is not None:
+            return curr_idx, rtn_node
+        
+        # if we haven't returned yet, then the kth smallest must not be in node's subtree.
+        return curr_idx, None
+    
+    _, kth_smallest_node = kth_smallest_helper(root, k, 1)
+    if kth_smallest_node is not None:
+        return kth_smallest_node.val
+    else:
+        return None
+
+
+n1 = TreeNode(val=2, left=TreeNode(1), right=None)
+n2 = TreeNode(val=3, left=n1, right=TreeNode(4))
+root = TreeNode(val=5, left=n2, right=TreeNode(6))
+k = 3
+print(kthSmallest(root, k))

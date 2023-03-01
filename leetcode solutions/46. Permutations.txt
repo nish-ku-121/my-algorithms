@@ -1,0 +1,56 @@
+'''
+46. Permutations
+
+Given an array nums of distinct integers, return all the possible permutations. You can return the answer in any order.
+
+Example 1:
+Input: nums = [1,2,3]
+Output: [[1,2,3],[1,3,2],[2,1,3],[2,3,1],[3,1,2],[3,2,1]]
+
+Example 2:
+Input: nums = [0,1]
+Output: [[0,1],[1,0]]
+
+Example 3:
+Input: nums = [1]
+Output: [[1]]
+
+Constraints:
+- 1 <= nums.length <= 6
+- -10 <= nums[i] <= 10
+- All the integers of nums are unique.
+'''
+
+def permutations(nums):
+    '''
+    O(n!) running time
+    O(2^n) space
+    
+    :param nums: an array nums of distinct integers.
+    :returns: all the possible permutations of the elements of nums.
+    '''
+    # base/corner cases
+    if nums is None:
+        return None
+        
+    # main case
+    def permutation_helper(set_of_nums):
+        # base case
+        if len(set_of_nums) == 0:
+            return [[]]
+            
+        # main case
+        perms = []
+        sub_set_of_nums = set_of_nums.copy()
+        for num in set_of_nums:
+            sub_set_of_nums.remove(num)
+            subsets = permutation_helper(sub_set_of_nums)
+            [subset.append(num) for subset in subsets]
+            perms.extend(subsets)
+            sub_set_of_nums.add(num)
+        return perms
+        
+    return permutation_helper(set(nums))
+
+nums = range(10)
+print(permutations(nums))

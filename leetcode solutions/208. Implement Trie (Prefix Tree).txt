@@ -1,0 +1,168 @@
+'''
+208. Implement Trie (Prefix Tree)
+
+https://leetcode.com/problems/implement-trie-prefix-tree/
+
+A trie (pronounced as "try") or prefix tree is a tree data structure used to efficiently store and retrieve keys in a dataset of strings. There are various applications of this data structure, such as autocomplete and spellchecker.
+
+Implement the Trie class:
+- Trie() Initializes the trie object.
+- void insert(String word) Inserts the string word into the trie.
+- boolean search(String word) Returns true if the string word is in the trie (i.e., was inserted before), and false otherwise.
+- boolean startsWith(String prefix) Returns true if there is a previously inserted string word that has the prefix prefix, and false otherwise.
+
+Example 1:
+Input
+["Trie", "insert", "search", "search", "startsWith", "insert", "search"]
+[[], ["apple"], ["apple"], ["app"], ["app"], ["app"], ["app"]]
+Output
+[null, null, true, false, true, null, true]
+
+Explanation
+Trie trie = new Trie();
+trie.insert("apple");
+trie.search("apple");   // return True
+trie.search("app");     // return False
+trie.startsWith("app"); // return True
+trie.insert("app");
+trie.search("app");     // return True
+
+Constraints:
+- 1 <= word.length, prefix.length <= 2000
+- word and prefix consist only of lowercase English letters.
+- At most 3 * 10^4 calls in total will be made to insert, search, and startsWith.
+'''
+
+from collections import deque
+
+
+class Trie:
+
+    def __init__(self):
+        self._sentinel = Trie._create_internal_node(None)
+
+
+    def insert(self, word: str) -> None:
+        self.__class__._insert_helper(self._sentinel, word)
+
+
+    def search(self, word: str) -> bool:
+        if self.__class__._find(self._sentinel, word) > 0: # word found
+            return True
+        else: # word not found or found but not inserted previously
+            return False
+
+
+    def startsWith(self, prefix: str) -> bool:
+        if self.__class__._find(self._sentinel, prefix) < 0: # word not found
+            return False
+        else: # word found, and possibly inserted previously
+            return True
+    
+    
+    def pretty_print(self):
+        fifo_deque = deque()
+        fifo_deque.append((self._sentinel, 0)) # (node, level in trie)
+        self.__class__._pretty_print(fifo_deque)
+
+
+    @classmethod
+    def _create_internal_node(cls, item, val=0):
+        return TreeNode(item, val=val)
+    
+    
+    @classmethod
+    def _insert_helper(cls, node, word):
+        '''
+        Recursively inserts word into the trie starting at node.
+        The last character of word inserted will have val of 1, indicating the word has been purposefully inserted.
+        '''
+        if word is None or len(word) == 0:
+            if node is not None:
+                if node.item is not None: # node is not sentinel node
+                    node.val = 1
+            return
+        child = node.find_child(word[0])
+        if child is None:
+            child = cls._create_internal_node(word[0])
+            node.add_child(child)
+        rtn = cls._insert_helper(child, word[1:])
+        return rtn
+    
+    
+    @classmethod
+    def _find(cls, node, word):
+        '''
+        Returns:
+            -1 if the word could not be found starting from node.
+            0 if the word was found, but was not previously inserted.
+            1 if the word was found and was previously inserted.
+        '''
+        if word is None or len(word) == 0:
+            return node.val
+    
+        child = node.find_child(word[0])
+        if child is None:
+            return -1
+        else:
+            return cls._find(child, word[1:])
+    
+    
+    @classmethod 
+    def _pretty_print(cls, deque):
+        if len(deque) == 0:
+            return
+        
+        node, node_level = deque[0]
+        curr_level = node_level
+        while len(deque) > 0:
+            # print every node at the current level on the same line
+            while node_level == curr_level:
+                node, node_level = deque.popleft()
+                # print the current node
+                if node is not None:
+                    print(node.item, end=" ")
+                else:
+                    print("NULL node", end=" ")
+                # push all of the node's children
+                for child in node.children:
+                    deque.append((child, node_level+1))
+                # check the next node's level 
+                if len(deque) > 0:
+                    node_level = deque[0][1]
+                else:
+                    break
+                    
+            # print a new line and update the current level to the next level
+            print()
+            curr_level = node_level
+            
+
+
+class TreeNode:
+    def __init__(self, item, val=0):
+        self.item = item
+        self.val = val
+        self.children = []
+    
+    def add_child(self, child):
+        self.children.append(child)
+   
+    def find_child(self, item):
+        for child in self.children:
+            if child.item == item:
+                return child
+        return None
+    
+    def __str__(self):
+        return f"TreeNode(item: {self.item}, val: {self.val}, num_children: {len(self.children)})"
+
+
+# Your Trie object will be instantiated and called as such:
+trie = Trie()
+trie.insert("apple")
+print(trie.search("apple"))   # return True
+print(trie.search("app"))    # return False
+print(trie.startsWith("app")) # return True
+trie.insert("app")
+print(trie.search("app"))     # return True

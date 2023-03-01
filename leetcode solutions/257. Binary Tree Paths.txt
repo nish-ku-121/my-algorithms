@@ -1,0 +1,58 @@
+Given a binary tree, return all root-to-leaf paths.
+
+Note: A leaf is a node with no children.
+
+Example:
+
+Input:
+
+   1
+ /   \
+2     3
+ \
+  5
+
+Output: ["1->2->5", "1->3"]
+
+Explanation: All root-to-leaf paths are: 1->2->5, 1->3
+
+
+
+    public static List<String> binaryTreePaths(TreeNode n) {
+        List<String> rtn = new LinkedList<String>();
+        // base/corner cases
+        if (n.left == null && n.right == null) {
+            rtn.add(String.valueOf(n.val));
+            return rtn;
+        }
+        
+        // main case
+        String s = String.valueOf(n.val) + "->";
+        if (n.left != null) {
+            List<String> l = binaryTreePaths(n.left);
+            for (String temp : l) {
+                rtn.add(s + temp);
+            }
+        }
+        if (n.right != null) {
+            List<String> r = binaryTreePaths(n.right);
+            for (String temp : r) {
+                rtn.add(s + temp);
+            }
+        }
+        return rtn;
+    }
+  
+  public static void print(List<String> l) {
+    for (String s: l) {
+      System.out.println(s);
+    }
+
+  public static void main(String[] args)
+  {
+    TreeNode root = new TreeNode(1);
+    root.left = new TreeNode(2);
+    root.right = new TreeNode(3);
+    root.left.right = new TreeNode(5);
+    print(binaryTreePaths(root));
+  }

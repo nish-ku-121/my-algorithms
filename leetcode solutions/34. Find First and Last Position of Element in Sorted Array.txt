@@ -1,0 +1,61 @@
+'''
+34. Find First and Last Position of Element in Sorted Array
+
+https://leetcode.com/problems/find-first-and-last-position-of-element-in-sorted-array/
+
+Given an array of integers nums sorted in non-decreasing order, find the starting and ending position of a given target value.
+
+If target is not found in the array, return [-1, -1].
+
+You must write an algorithm with O(log n) runtime complexity.
+
+Example 1:
+Input: nums = [5,7,7,8,8,10], target = 8
+Output: [3,4]
+
+Example 2:
+Input: nums = [5,7,7,8,8,10], target = 6
+Output: [-1,-1]
+
+Example 3:
+Input: nums = [], target = 0
+Output: [-1,-1]
+'''
+
+def searchRange(nums, target):
+    def search_range_helper(nums, target, i, j, should_find_min):
+        # base/corner cases
+        if nums is None or len(nums) == 0:
+            return -1
+        if i > j or i >= len(nums) or j < 0:
+            return -1
+
+        # main case
+        mid_idx = (i+j) // 2
+        mid_val = nums[mid_idx]
+        is_not_min_matching_val = mid_idx-1 >= 0 and nums[mid_idx-1] == target
+        is_not_max_matching_val = mid_idx+1 < len(nums) and nums[mid_idx+1] == target
+        if mid_val == target:
+            if should_find_min and is_not_min_matching_val:
+                return search_range_helper(nums, target, i, mid_idx-1, should_find_min)
+            elif not should_find_min and is_not_max_matching_val:
+                return search_range_helper(nums, target, mid_idx+1, j, should_find_min)
+            else:
+                return mid_idx
+        elif target < mid_val:
+            return search_range_helper(nums, target, i, mid_idx-1, should_find_min)
+        else: # target > mid_val
+            return search_range_helper(nums, target, mid_idx+1, j, should_find_min)
+    
+    start = search_range_helper(nums, target, 0, len(nums)-1, True)
+    end = -1
+    if start > -1:
+        end = search_range_helper(nums, target, start+1, len(nums)-1, False)
+    if end == -1:
+        end = start
+    return (start, end)
+
+
+nums = [5,7,7,8,8,10]
+target = 8
+print(searchRange(nums, target))
