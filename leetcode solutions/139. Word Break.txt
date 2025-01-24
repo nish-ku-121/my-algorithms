@@ -1,0 +1,59 @@
+'''
+139. Word Break
+
+https://leetcode.com/problems/word-break/
+
+Given a string s and a dictionary of strings wordDict, return true if s can be segmented into a space-separated sequence of one or more dictionary words.
+
+Note that the same word in the dictionary may be reused multiple times in the segmentation.
+
+Example 1:
+Input: s = "leetcode", wordDict = ["leet","code"]
+Output: true
+Explanation: Return true because "leetcode" can be segmented as "leet code".
+
+Example 2:
+Input: s = "applepenapple", wordDict = ["apple","pen"]
+Output: true
+Explanation: Return true because "applepenapple" can be segmented as "apple pen apple".
+Note that you are allowed to reuse a dictionary word.
+
+Example 3:
+Input: s = "catsandog", wordDict = ["cats","dog","sand","and","cat"]
+Output: false
+ 
+Constraints:
+- 1 <= s.length <= 300
+- 1 <= wordDict.length <= 1000
+- 1 <= wordDict[i].length <= 20
+- s and wordDict[i] consist of only lowercase English letters.
+- All the strings of wordDict are unique.
+'''
+
+class Solution:
+    def wordBreak(self, s, wordDict):
+        '''
+        Time Complexity: O(|s|^2)
+        Space Complexity: O(|s| + |wordDict|)
+        '''
+        # base/corner cases
+        if s is None or wordDict is None:
+            return False
+        if len(s) == 0 or len(wordDict) == 0:
+            return False
+
+        words = set(wordDict)
+        can_break = [False for _ in range(len(s)+1)]
+        can_break[0] = True
+        for i in range(1, len(s)+1):
+            for j in range(i):
+                if can_break[j] and s[j:i] in words:
+                    can_break[i] = True
+                    break
+        return can_break[-1]
+
+
+sln = Solution()
+s = "catsandog"
+wordDict = ["cats","dog","sand","and","cat"]
+print(sln.wordBreak(s, wordDict))

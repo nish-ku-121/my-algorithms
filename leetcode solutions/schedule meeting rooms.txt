@@ -1,0 +1,35 @@
+'''
+Given an array of meeting time intervals consisting of start and end times {[start1, end1], [start2,end2],...} find the minimum number of conference rooms required.
+
+'''
+
+from heapq import *
+
+def schedule_meeting_rooms(meetings):
+    def sort_by_start_time(meetings):
+        return sorted(meetings, key=lambda meeting: meeting[0])
+        
+    # base/corner cases
+    if meetings is None:
+        return None
+    
+    # main case
+    sorted_meetings = sort_by_start_time(meetings) # todo: implement sort by (increasing) start times
+    room_count = 0
+    min_heap = []
+    for meeting in sorted_meetings:
+        start_time = meeting[0]
+        end_time = meeting[1]
+        if (len(min_heap) == 0):
+            room_count += 1
+            heappush(min_heap, end_time)
+        else:
+            if (start_time >= min_heap[0]):
+                heappushpop(min_heap, end_time)
+            else:
+                room_count += 1
+                heappush(min_heap, end_time)
+    return room_count
+
+meetings = [[9, 9.5], [7, 9], [8, 10], [9.5, 10]]
+print(schedule_meeting_rooms(meetings))

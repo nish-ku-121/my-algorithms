@@ -1,0 +1,77 @@
+'''
+56. Merge Intervals
+
+https://leetcode.com/problems/merge-intervals
+
+Given an array of intervals where intervals[i] = [start_i, end_i], merge all overlapping intervals, and return an array of the non-overlapping intervals that cover all the intervals in the input.
+
+Example 1:
+Input: intervals = [[1,3],[2,6],[8,10],[15,18]]
+Output: [[1,6],[8,10],[15,18]]
+Explanation: Since intervals [1,3] and [2,6] overlap, merge them into [1,6].
+
+Example 2:
+Input: intervals = [[1,4],[4,5]]
+Output: [[1,5]]
+Explanation: Intervals [1,4] and [4,5] are considered overlapping.
+
+Constraints:
+- 1 <= intervals.length <= 10^4
+- intervals[i].length == 2
+- 0 <= start_i <= end_i <= 10^4
+'''
+
+'''
+idea:
+let's sort the array by start_i (smallest to largest).
+then repeatedly merge interval j+1 into merged interval i_j using end = max(end_i_j, end_{j+1}).
+note that start merged interval i_j is the min start of all intervals i,...,j because the array is sorted by min start.
+
+examples:
+[[1,3],[1,2]] -> [[1,3]]
+[[1,4],[1,3],[2,3]] -> [[1,4],[2,3]] -> [[1,4]]
+'''
+
+class Solution:
+    def merge(self, intervals):
+        '''
+        time complexity: O(nlogn)
+        space complexity: O(logn) (for python sort, apparently)
+        '''
+        def attempt_merge(interval_1, interval_2):
+            # base/corner cases
+            if interval_1 is None or len(interval_1) == 0:
+                return interval_2, True
+            if interval_2 is None or len(interval_2) == 0:
+                return interval_1, True
+
+            # main case
+            if (interval_1[0] <= interval_2[0]) and (interval_2[0] <= interval_1[1]):
+                merged = [min(interval_1[0], interval_2[0]),
+                          max(interval_1[1], interval_2[1])]
+                return merged, True
+            else:
+                return None, False
+
+        # base/corner cases
+        if intervals is None or len(intervals) == 0:
+            return intervals
+
+        # main case
+        intervals.sort(key=lambda interval: interval[0])
+        merged_intervals = []
+        curr_merged = []
+        for interval in intervals:
+            merged, success = attempt_merge(curr_merged, interval)
+            if success:
+                curr_merged = merged
+            else:
+                merged_intervals.append(curr_merged)
+                curr_merged = interval
+        merged_intervals.append(curr_merged)
+        return merged_intervals
+
+
+sln = Solution()
+intervals = [[1,3],[2,6],[8,10],[15,18]]
+print(sln.merge(intervals))

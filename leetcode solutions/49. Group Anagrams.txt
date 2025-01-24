@@ -1,0 +1,67 @@
+'''
+49. Group Anagrams
+
+https://leetcode.com/problems/group-anagrams/
+
+Given an array of strings strs, group the anagrams together. You can return the answer in any order.
+
+An Anagram is a word or phrase formed by rearranging the letters of a different word or phrase, typically using all the original letters exactly once.
+
+Example 1:
+Input: strs = ["eat","tea","tan","ate","nat","bat"]
+Output: [["bat"],["nat","tan"],["ate","eat","tea"]]
+
+Example 2:
+Input: strs = [""]
+Output: [[""]]
+
+Example 3:
+Input: strs = ["a"]
+Output: [["a"]]
+
+Constraints:
+- 1 <= strs.length <= 10^4
+- 0 <= strs[i].length <= 100
+- strs[i] consists of lowercase English letters.
+'''
+
+class Solution:
+    def groupAnagrams(self, strs):
+        # base/corner cases
+        if strs is None:
+            return None
+
+        # main case
+        # key = word, val = list of anagrams of word
+        anagram_sets = {}
+        
+        def is_in(word, anagram_set):
+            if len(word) != len(anagram_set):
+                return False
+            for c in word:
+                if not c in anagram_set:
+                    return False
+            return True
+
+        def add(word, anagram_sets):
+            chars = set()
+            for c in word:
+                chars.add(c)
+            anagram_sets[frozenset(chars)] = [word]
+
+        for word in strs:
+            was_found = False
+            for anagram_set in anagram_sets:
+                was_found = is_in(word, anagram_set)
+                if was_found:
+                    anagram_sets[anagram_set].append(word)
+                    break
+            if not was_found:
+                add(word, anagram_sets)
+        
+        return list(anagram_sets.values())
+        
+        
+sln = Solution()
+strs = ["bac", "ba"]
+print(sln.groupAnagrams(strs))

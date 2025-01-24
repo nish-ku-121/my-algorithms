@@ -1,0 +1,58 @@
+'''
+53. Maximum Subarray
+
+https://leetcode.com/problems/maximum-subarray/
+
+Given an integer array nums, find the subarray with the largest sum, and return its sum.
+
+Example 1:
+Input: nums = [-2,1,-3,4,-1,2,1,-5,4]
+Output: 6
+Explanation: The subarray [4,-1,2,1] has the largest sum 6.
+
+Example 2:
+Input: nums = [1]
+Output: 1
+Explanation: The subarray [1] has the largest sum 1.
+
+Example 3:
+Input: nums = [5,4,-1,7,8]
+Output: 23
+Explanation: The subarray [5,4,-1,7,8] has the largest sum 23.
+
+Constraints:
+- 1 <= nums.length <= 10^5
+- (-10)^4 <= nums[i] <= 10^4
+
+Follow up: If you have figured out the O(n) solution, try coding another solution using the divide and conquer approach, which is more subtle.
+'''
+
+'''
+Idea:
+S_j = sum(x_0,...,x_j)
+M_j = S_j - min S_{j-1} <=> max sum between i and j for 0<=i<j, i.e. max subarray at j
+max sub array = max_j M_j, where j in range(len(nums))
+'''
+class Solution:
+    def maxSubArray(self, nums):
+        '''
+        time complexity: O(n)
+        space complexity: O(n)
+        '''
+        # base/corner cases
+        if nums is None or len(nums) == 0:
+            return 0
+        
+        # main case
+        min_so_far = 0
+        running_sum = 0
+        max_sums = [0] * len(nums)
+        for i,num in enumerate(nums):
+            running_sum += num
+            max_sums[i] = running_sum - min_so_far
+            min_so_far = min(min_so_far, running_sum)
+        return max(max_sums)
+
+sln = Solution()
+nums = [-2,1,-3,4,-1,2,1,-5,4]
+print(sln.maxSubArray(nums))

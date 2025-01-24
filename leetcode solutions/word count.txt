@@ -1,0 +1,78 @@
+def split_into_words(merged_word, set_of_words):
+    '''
+    <explanation here>
+    O(n^2) running time
+    O(n) space
+
+    :param merged_word: <explanation here>
+    :param set_of_words: <explanation here>
+    :returns: <explanation here>
+    '''
+    def is_word(subword, set_of_words):
+        '''
+        O(1) running time (best case), O(n) running time (worst case)
+        O(1) space
+        '''
+        if subword in set_of_words:
+            return 1
+        else:
+            return 0
+            
+    # base / corner cases
+    if merged_word is None or set_of_words is None:
+        return None, None
+    
+    # main case
+    max_word_count = [0] * (len(merged_word) + 1)
+    for i in range(1, len(merged_word) + 1):
+        max_so_far = 0
+        for j in range(i):
+            max_so_far = max(max_so_far, 
+                             max_word_count[j] + is_word(merged_word[j:i], set_of_words))
+        max_word_count[i] = max_so_far
+    return max_word_count[-1], get_words(merged_word, set_of_words, max_word_count)
+    
+def get_words(merged_word, set_of_words, max_word_count):
+    '''
+    <explanation here>
+    O(n) running time
+    O(n) space
+
+    :param merged_word: <explanation here>
+    :param set_of_words: <explanation here>
+    :param max_word_count: <explanation here>
+    '''
+    def find_subword(merged_word, end_index, set_of_words):
+        for i in range(end_index, -1, -1):
+            sub_word = merged_word[i:end_index]
+            if sub_word in set_of_words:
+                return sub_word, i
+            i -= 1
+        return None, -1 # shouldn't happen for our use case
+            
+    words = [None] * max_word_count[-1]
+    remainder = []
+    running_count = max_word_count[-1]
+    end_index = len(max_word_count)
+    i = len(max_word_count)-1
+    while i >= 0:
+        remainder_word = merged_word[(i+2)-1:end_index-1]
+        if (running_count == max_word_count[i] + 1):
+            if remainder_word != '':
+                remainder.append(remainder_word)
+            end_index_in_orig = i+1 # (i+2)-1
+            sub_word, start_index_in_orig = find_subword(merged_word, end_index_in_orig, set_of_words)
+            words[running_count-1] = sub_word
+            running_count -= 1
+            i = start_index_in_orig+1
+            end_index = i
+        i -= 1
+    return words, remainder
+
+# TODO: What to do if merged_word contains words not in the dictionary, e.g "foobricz"? The current code assumes these are "remainder words" and outputs them separately.
+set_of_words = ("foo", "bar", "baz", "ba", "z", "foobar")
+merged_word = "foobarbaz"
+word_count, words_and_remainder = split_into_words(merged_word, set_of_words)
+print(f"word count: {word_count}")
+print(f"words: {words_and_remainder[0]}")
+print(f"remainder: {words_and_remainder[1]}")

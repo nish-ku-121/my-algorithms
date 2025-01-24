@@ -1,0 +1,99 @@
+'''
+155. Min Stack
+
+https://leetcode.com/problems/min-stack
+
+Design a stack that supports push, pop, top, and retrieving the minimum element in constant time.
+
+Implement the MinStack class:
+- MinStack() initializes the stack object.
+- void push(int val) pushes the element val onto the stack.
+- void pop() removes the element on the top of the stack.
+- int top() gets the top element of the stack.
+- int getMin() retrieves the minimum element in the stack.
+
+You must implement a solution with O(1) time complexity for each function.
+
+Example 1:
+Input
+["MinStack","push","push","push","getMin","pop","top","getMin"]
+[[],[-2],[0],[-3],[],[],[],[]]
+
+Output
+[null,null,null,null,-3,null,0,-2]
+
+Explanation
+MinStack minStack = new MinStack();
+minStack.push(-2);
+minStack.push(0);
+minStack.push(-3);
+minStack.getMin(); // return -3
+minStack.pop();
+minStack.top();    // return 0
+minStack.getMin(); // return -2
+
+Constraints:
+- (-2)^31 <= val <= (2^31) - 1
+- Methods pop, top and getMin operations will always be called on non-empty stacks.
+- At most 3 * 10^4 calls will be made to push, pop, top, and getMin.
+'''
+
+'''
+key idea:
+keep track of stack, as usual:
+stack: x1,...,xi,...xj
+(xi is min element of x1,...,xj)
+and also a "min elements" list, which represents the min element up to that element in the stack, e.g.:
+min_elements: xi
+then when an element is added, if it's smaller than the smallest element (tail of "min elements" list), then append it to the "min elements" list:
+stack: x1,...,xi,...xj,x{j+1}
+(xi is min element of x1,...,xj)
+(x{j+1} is min element of x1,...,x{j+1})
+min_elements: xi,x{j+1}
+if it's not smaller, then don't:
+stack: x1,...,xi,...xj,x{j+1}
+(xi is min element of x1,...,xj)
+min_elements: xi
+when we pop from the stack, we also pop from "min elements" list if it's the smallest element (i.e. tail element).
+note that min_elements is monotonically decreasing, so it never needs to be searched to find the next min element.
+the approach maintains the following invariants:
+- suppose xi is the min of x1,...,xj. if an element x{j+1} is pushed and it is not less than the existing min xi, then xi is the min of x1,...,x{j+1}. therefore popping x{j+1} will not change the min of x1,...,xj.
+- it is _not_ possible to push a 2nd smallest element, but pop the 1st smallest element before the 2nd, thereby making the 2nd smallest the new smallest (generalize accordingly to the jth smallest and ith smallest, for j>i).
+- if x{j+1} is the new smallest element of x1,...,xj,x{j+1}, then pushing and popping it will _not_ affect the order of min elements of x1,...,xj.
+'''
+
+import math
+
+class MinStack:
+
+    def __init__(self):
+        self._stack = []
+        self._min_elems = [math.inf]
+        
+    def push(self, val: int) -> None:
+        self._stack.append(val)
+        min_so_far = self._min_elems[-1]
+        if val <= min_so_far:
+            self._min_elems.append(val) 
+
+    def pop(self) -> None:
+        elem = self._stack.pop()
+        if elem == self.getMin():
+            self._min_elems.pop()
+
+    def top(self) -> int:
+        return self._stack[-1]
+
+    def getMin(self) -> int:
+        return self._min_elems[-1]
+        
+
+# Your MinStack object will be instantiated and called as such:
+minStack = MinStack();
+minStack.push(-2);
+minStack.push(0);
+minStack.push(-3);
+print(minStack.getMin()); # return -3
+minStack.pop();
+print(minStack.top());    # return 0
+print(minStack.getMin()); # return -2
