@@ -1,0 +1,100 @@
+'''
+189. Rotate Array
+
+https://leetcode.com/problems/rotate-array/
+
+Given an integer array nums, rotate the array to the right by k steps, where k is non-negative.
+
+Example 1:
+Input: nums = [1,2,3,4,5,6,7], k = 3
+Output: [5,6,7,1,2,3,4]
+Explanation:
+rotate 1 steps to the right: [7,1,2,3,4,5,6]
+rotate 2 steps to the right: [6,7,1,2,3,4,5]
+rotate 3 steps to the right: [5,6,7,1,2,3,4]
+
+Example 2:
+Input: nums = [-1,-100,3,99], k = 2
+Output: [3,99,-1,-100]
+Explanation: 
+rotate 1 steps to the right: [99,-1,-100,3]
+rotate 2 steps to the right: [3,99,-1,-100]
+
+Constraints:
+- 1 <= nums.length <= 10^5
+- (-2)^31 <= nums[i] <= 2^31 - 1
+- 0 <= k <= 10^5
+
+Follow up:
+- Try to come up with as many solutions as you can. There are at least three different ways to solve this problem.
+- Could you do it in-place with O(1) extra space?
+'''
+
+'''
+corollary 1: if repeatedly moving k steps from position i, it is not possible
+to double-back on position j>i without first having double-backed on position i.
+proof (by contradiction):
+suppose we did double-back on position j>i before having double-backed on position i.
+this means from some position j' < j, we moved k steps to j, i.e. j' = j - k modn.
+note that j = i + kx modn for some x > 0.
+case 1: j' > i
+    case 1.1: we double-backed on j' before i
+        recursively apply the proof for j=j'
+    case 1.2: we are seeing j' for the first time
+        this is not possible, because:
+            j' = j - k modn = (i + kx) - k modn = i + k*(x-1) modn
+        in other words, since we saw j for the first time after x k-steps from i, we would have seen j' for the first time after x-1 k-steps from i.
+case 2: j' < i
+    this implies:
+        j' + k < i + k
+        j < i + k
+        j - i < k
+        j < i + k
+    however, this is not possible because j = i + kx modn. in other words, j is always at least k steps away from i. contradiction.
+all cases result in contradiction (or not possible), so it is not possible
+to double-back on position j>i without first having double-backed on position i. QED. 
+'''
+
+'''
+corollary 1 implies that we can keep "safely" rotating displaced elements from position i (in repeated k-steps) until we reach back to position i, at which point we'll know we're done with all the rotations that are possible from position i. "safely", as in we don't rotate something that has already been rotated (i.e. we won't double-back on j>i before i).
+'''
+
+'''
+the algorithm follows naturally then:
+- do all rotations from position i (starting with i=0) while keeping count of how many elements have been rotated.
+- once we get back to position i, if the count is still less then nums.length, then repeat for position i+1. if the count == nums.length, all the elements have been rotated and we are done.
+'''
+
+class Solution:
+    def rotate(self, nums, k):
+        """
+        Do not return anything, modify nums in-place instead.
+        """
+        def rotate_all(nums, start, i, k, elem_to_place=None):
+            if start != i or elem_to_place is None:
+                new_idx = (i + k) % len(nums)
+                displaced = nums[new_idx]
+                nums[new_idx] = nums[i] if elem_to_place is None else elem_to_place
+                return 1 + rotate_all(nums, start, new_idx, k, elem_to_place=displaced)
+            else:
+                return 0
+
+        # base/corner cases
+        if nums is None or len(nums) == 0 or k <= 0:
+            return None
+            
+        # main case
+        n = len(nums)
+        count = 0
+        k_modded = k % n
+        for i in range(n):
+            if count < n:
+                count += rotate_all(nums, i, i, k)
+
+
+sln = Solution()
+nums = [1,2,3,4,5,6,7]
+for k in range(0, 2*len(nums)+1):
+    temp_nums = nums.copy()
+    sln.rotate(temp_nums, k)
+    print(f"k={k}, {temp_nums}")

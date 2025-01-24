@@ -1,0 +1,100 @@
+'''
+54. Spiral Matrix
+
+https://leetcode.com/problems/spiral-matrix/
+
+Given an m x n matrix, return all elements of the matrix in spiral order.
+
+Example 1:
+Input: matrix = [[1,2,3],[4,5,6],[7,8,9]]
+Output: [1,2,3,6,9,8,7,4,5]
+
+Example 2:
+Input: matrix = [[1,2,3,4],[5,6,7,8],[9,10,11,12]]
+Output: [1,2,3,4,8,12,11,10,9,5,6,7]
+
+Constraints:
+- m == matrix.length
+- n == matrix[i].length
+- 1 <= m, n <= 10
+- -100 <= matrix[i][j] <= 100
+'''
+
+class Solution:
+    def spiralOrder(self, matrix):
+        # base/corner cases
+        if matrix is None:
+            return None
+        if len(matrix) == 0 or len(matrix[0]) == 0:
+            return []
+
+        # main case
+        min_i, max_i = 0, len(matrix)-1
+        min_j, max_j = 0, len(matrix[0])-1
+        i,j = 0,0
+        origin = (i,j)
+        # nonsensical value, since there is no last explored
+        last_explored = (0,-1)
+        output = [matrix[i][j]]
+        def is_valid(matrix, i, j, min_i, max_i, min_j, max_j, last_explored):
+            if (i >= 0 and i < len(matrix)
+                and j >= 0 and j < len(matrix[0])
+                and min_i <= i and i <= max_i
+                and min_j <= j and j <= max_j
+                and (not (i == last_explored[0] and j == last_explored[1]))
+                ):
+                return True
+            return False
+
+        while (min_i <= max_i) and (min_j <= max_j):
+            print(f"i: {i}, j: {j}, min_i: {min_i}, max_i: {max_i}, min_j: {min_j}, max_j: {max_j}")
+            
+            # keep moving right and appending to output
+            while is_valid(matrix, i, j+1, min_i, max_i, min_j, max_j, last_explored):
+                last_explored = (i,j)
+                i,j = i,j+1
+                output.append(matrix[i][j])
+                print(f"r(i,j): {i,j}, elem: {matrix[i][j]}, last_explored: {last_explored}")
+           
+            # keep moving down and appending to output
+            while is_valid(matrix, i+1, j, min_i, max_i, min_j, max_j, last_explored):
+                last_explored = (i,j)
+                i,j = i+1,j
+                output.append(matrix[i][j])
+                print(f"d(i,j): {i,j}, elem: {matrix[i][j]}, last_explored: {last_explored}")
+            
+            # keep moving left and appending to output
+            while is_valid(matrix, i, j-1, min_i, max_i, min_j, max_j, last_explored):
+                last_explored = (i,j)
+                i,j = i,j-1
+                output.append(matrix[i][j])
+                print(f"l(i,j): {i,j}, elem: {matrix[i][j]}, last_explored: {last_explored}")
+            
+            # keep moving up and appending to output, until we reach the origin
+            while is_valid(matrix, i-1, j, min_i, max_i, min_j, max_j, last_explored):
+                if not (i-1 == origin[0] and j == origin[1]):
+                    last_explored = (i,j)
+                    i,j = i-1,j
+                    output.append(matrix[i][j])
+                else:
+                    break
+                print(f"u(i,j): {i,j}, elem: {matrix[i][j]}, last_explored: {last_explored}")
+            
+            # at this point, we should be at our new origin
+            origin = (i,j)
+            print(f"new origin:{origin}")
+            
+            # starting the inner spiral means closing off the outer spiral
+            min_i += 1
+            max_i -= 1
+            min_j += 1
+            max_j -= 1
+        return output
+        
+        
+sln = Solution()
+matrix = [[1,2,3],[4,5,6],[7,8,9]]
+# Output: [1,2,3,6,9,8,7,4,5]
+for row in matrix:
+    print(row)
+print(sln.spiralOrder(matrix))

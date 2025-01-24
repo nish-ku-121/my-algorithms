@@ -1,0 +1,40 @@
+'''
+22. Generate Parentheses
+
+https://leetcode.com/problems/generate-parentheses/
+
+Given n pairs of parentheses, write a function to generate all combinations of well-formed parentheses.
+
+Example 1:
+Input: n = 3
+Output: ["((()))","(()())","(())()","()(())","()()()"]
+
+Example 2:
+Input: n = 1
+Output: ["()"]
+ 
+Constraints:
+- 1 <= n <= 8
+'''
+
+class Solution:
+    def generateParenthesis(self, n):
+        if n == 1:
+            return ['()']
+        else:
+            parens = []
+            recurse = self.generateParenthesis(n-1)
+            for paren_pair in recurse:
+                parens.append('()' + paren_pair[:])
+                for i in range(len(paren_pair)):
+                    if paren_pair[i] == '(':
+                        temp_parens = paren_pair[:i+1] + '()' + paren_pair[i+1:]
+                        parens.append(temp_parens)
+                    else:
+                        break
+            return parens
+            
+
+sln = Solution()
+n = 3
+print(sln.generateParenthesis(n))

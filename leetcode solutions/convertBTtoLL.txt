@@ -1,0 +1,91 @@
+//*******************************************************************
+// Welcome to CompileJava!
+// If you experience any issues, please contact us ('More Info')  -->
+//*******************************************************************
+
+import java.lang.Math; // headers MUST be above the first class
+
+import java.util.*;
+
+public class HelloWorld{
+
+  public static ListNode convert(TreeNode t, ListNode next) {
+    // base/corner cases
+    if (t == null) {
+      if (next != null) {
+        return next;
+      } else {
+        return null;
+      }
+    }
+    
+    // main case
+    ListNode curr = new ListNode(t.val);
+    ListNode currLeft = convert(t.left, curr);
+    ListNode currRight = convert(t.right, next);
+    curr.next = currRight;
+    
+    return currLeft;
+  }
+  
+  public static void print(ListNode n) {
+    while (n != null) {
+      System.out.print(n.val);
+      System.out.print(" ");
+      n = n.next;
+    }
+  }
+
+    public static void print(TreeNode n) {
+      if (n != null) {
+        print(n.left);
+        System.out.print(n.val);
+        System.out.print(" ");
+        print(n.right);
+      }
+    }
+
+     public static void main(String []args){
+         TreeNode root = new TreeNode(4, 
+                                      new TreeNode(2,
+                                                   new TreeNode(1), 
+                                                   new TreeNode(3)), 
+                                      new TreeNode(6,
+                                                   new TreeNode(5), 
+                                                   new TreeNode(7))
+                                     );
+         print(root);
+       System.out.println();
+       print(convert(root, null));
+     }
+}
+
+public class ListNode {
+  int val;
+  ListNode next;
+  
+  public ListNode(int val) {
+    this(val, null);
+  }
+  
+  public ListNode(int val, ListNode next) {
+    this.val = val;
+    this.next = next;
+  }
+}
+
+public class TreeNode {
+    int val;
+    TreeNode left;
+    TreeNode right;
+    
+    public TreeNode(int val) {
+        this(val, null, null);
+    }
+    
+    public TreeNode(int val, TreeNode left, TreeNode right) {
+        this.val = val;
+        this.left = left;
+        this.right = right;
+    }
+}
